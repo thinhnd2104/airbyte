@@ -11,17 +11,13 @@ import ResetDataModal from "components/ResetDataModal";
 import { FeatureItem, useFeatureService } from "hooks/services/Feature";
 import { useResetConnection, useSyncConnection } from "hooks/services/useConnectionHook";
 import useLoadingState from "hooks/useLoadingState";
-import { useDestinationDefinition } from "services/connector/DestinationDefinitionService";
-import { useSourceDefinition } from "services/connector/SourceDefinitionService";
 import { useListJobs } from "services/job/JobService";
 
 import { ConnectionStatus, WebBackendConnectionRead } from "../../../../../core/request/AirbyteClient";
 import JobsList from "./JobsList";
-import { StatusMainInfo } from "./StatusMainInfo";
 
 interface StatusViewProps {
   connection: WebBackendConnectionRead;
-  frequencyText?: string;
 }
 
 const Content = styled.div`
@@ -51,15 +47,11 @@ const SyncButton = styled(LoadingButton)`
   min-height: 28px;
 `;
 
-const StatusView: React.FC<StatusViewProps> = ({ connection, frequencyText }) => {
+const StatusView: React.FC<StatusViewProps> = ({ connection }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isLoading, showFeedback, startAction } = useLoadingState();
   const { hasFeature } = useFeatureService();
   const allowSync = hasFeature(FeatureItem.AllowSync);
-
-  const sourceDefinition = useSourceDefinition(connection?.source.sourceDefinitionId);
-
-  const destinationDefinition = useDestinationDefinition(connection.destination.destinationDefinitionId);
 
   const jobs = useListJobs({
     configId: connection.connectionId,
@@ -74,13 +66,6 @@ const StatusView: React.FC<StatusViewProps> = ({ connection, frequencyText }) =>
 
   return (
     <Content>
-      <StatusMainInfo
-        connection={connection}
-        frequencyText={frequencyText}
-        sourceDefinition={sourceDefinition}
-        destinationDefinition={destinationDefinition}
-        allowSync={allowSync}
-      />
       <StyledContentCard
         title={
           <Title>
