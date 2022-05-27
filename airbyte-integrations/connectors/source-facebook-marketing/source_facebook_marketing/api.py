@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2022 Airbyte, Inc., all rights reserved.
+# Copyright (c) 2021 Airbyte, Inc., all rights reserved.
 #
 
 import json
@@ -13,6 +13,7 @@ from cached_property import cached_property
 from facebook_business import FacebookAdsApi
 from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.api import FacebookResponse
+from facebook_business.apiconfig import ads_api_config
 from facebook_business.exceptions import FacebookRequestError
 from source_facebook_marketing.streams.common import retry_pattern
 
@@ -161,7 +162,7 @@ class API:
     def __init__(self, account_id: str, access_token: str):
         self._account_id = account_id
         # design flaw in MyFacebookAdsApi requires such strange set of new default api instance
-        self.api = MyFacebookAdsApi.init(access_token=access_token, crash_log=False)
+        self.api = MyFacebookAdsApi.init(access_token=access_token, crash_log=False, api_version='v14.0')
         FacebookAdsApi.set_default_api(self.api)
 
     @cached_property
